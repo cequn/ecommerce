@@ -429,6 +429,7 @@ class CouponMixin(object):
             email_domains=email_domains,
             end_datetime=datetime.datetime(2020, 1, 1),
             enterprise_customer=enterprise_customer,
+            enterprise_customer_catalog=None,
             max_uses=max_uses,
             note=note,
             partner=partner,

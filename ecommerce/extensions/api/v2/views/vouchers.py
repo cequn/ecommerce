@@ -1,9 +1,9 @@
 """HTTP endpoints for interacting with vouchers."""
 import logging
-import pytz
 from urlparse import urlparse
 
 import django_filters
+import pytz
 from dateutil.parser import parse
 from dateutil.utils import default_tzinfo
 from django.shortcuts import get_object_or_404
@@ -171,7 +171,7 @@ class VoucherViewSet(NonDestroyableModelViewSet):
                 offset=request.GET.get('offset'),
             )
         else:
-            logger.error('No catalog parameter set for fetching offers for voucher {}'.format(voucher))
+            logger.error('No catalog parameter set for fetching offers for voucher %s', voucher)
             response = {}
         next_page = response['next']
         products, stock_records, course_run_metadata = self.retrieve_course_objects(

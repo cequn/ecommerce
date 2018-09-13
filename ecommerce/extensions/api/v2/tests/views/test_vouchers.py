@@ -218,7 +218,7 @@ class VoucherViewSetTests(DiscoveryMockMixin, DiscoveryTestMixin, LmsApiMockMixi
             'enrollment_end': str(now() - datetime.timedelta(days=1)),
         }]
 
-        products, __ = VoucherViewSet().retrieve_course_objects(course_discovery_results, 'professional')
+        products, __, __ = VoucherViewSet().retrieve_course_objects(course_discovery_results, 'professional')
         self.assertIn(no_date_seat, products)
         self.assertIn(valid_seat, products)
         self.assertNotIn(expired_seat, products)

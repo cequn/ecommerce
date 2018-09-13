@@ -378,7 +378,17 @@ def has_enterprise_offer(basket):
 
 def get_enterprise_catalog(site, enterprise_catalog, limit, page):
     """
+    Get the EnterpriseCustomerCatalog for a given catalog uuid.
 
+    Args:
+        site (Site): The site which is handling the current request
+        enterprise_catalog (str): The uuid of the Enterprise Catalog
+        limit (int): The number of results to return per page.
+        page (int): The page number to fetch.
+
+    Returns:
+        dict: The result set containing the content objects associated with the Enterprise Catalog.
+        NoneType: Return None if no catalog with that uuid is found.
     """
     resource = 'enterprise_catalogs'
     partner_code = site.siteconfiguration.partner.short_code
