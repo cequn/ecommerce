@@ -9,6 +9,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.db import transaction
 from django.utils.translation import ugettext_lazy as _
+from oscar.apps.basket.signals import voucher_addition
 from oscar.core.loading import get_class, get_model
 
 from ecommerce.courses.utils import mode_for_product
@@ -110,7 +111,7 @@ def prepare_basket(request, products, voucher=None):
         basket.clear_vouchers()
         is_valid, message = validate_voucher(voucher, request.user, basket, request.site)
         if is_valid:
-            apply_voucher_on_basket_and_check_discount(voucher, request, basket)
+            apply_voucher_on_basket_and_check_discount(voucher_addition, voucher, request, basket)
         else:
             logger.info(message)
 
@@ -386,7 +387,7 @@ def validate_voucher(voucher, user, basket, request_site):
     return True, ''
 
 
-def apply_voucher_on_basket_and_check_discount(voucher, request, basket):
+def apply_voucher_on_basket_and_check_discount(caller, voucher, request, basket):
     """
     Applies voucher on a product.
 
@@ -395,11 +396,16 @@ def apply_voucher_on_basket_and_check_discount(voucher, request, basket):
         basket (Basket): basket object on which voucher is going to be applied
         request (Request): Request object
     """
+    # Reset any site offers that are applied so that only one offer is active.
+    request.basket.reset_offer_applications()
     basket.vouchers.add(voucher)
-    Applicator().apply(basket, request.user, request)
+    voucher_addition.send(sender=caller, basket=request.basket, voucher=voucher)
 
+    Applicator().apply(basket, request.user, request)
     # Recalculate discounts to see if the voucher gives any
     discounts_after = request.basket.offer_applications
+
+    # Look for discounts from this new voucher
     found_discount = False
     for discount in discounts_after:
         if discount['voucher'] and discount['voucher'] == voucher:
