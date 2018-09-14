@@ -1,5 +1,5 @@
 import hashlib
-import newrelic
+import newrelic.agent
 
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
