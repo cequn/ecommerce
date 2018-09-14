@@ -246,8 +246,11 @@ ROOT_URLCONF = '{}.urls'.format(SITE_NAME)
 COMMERCE_API_TIMEOUT = 7
 
 # Cache course info from course API.
-COURSES_API_CACHE_TIMEOUT = 86400  # Value is in seconds
+COURSES_API_CACHE_TIMEOUT = 3600  # Value is in seconds
 PROGRAM_CACHE_TIMEOUT = 3600  # Value is in seconds.
+
+# Cache catalog results from the enterprise and discovery service.
+CATALOG_RESULTS_CACHE_TIMEOUT = 86400
 
 # PROVIDER DATA PROCESSING
 PROVIDER_DATA_PROCESSING_TIMEOUT = 15  # Value is in seconds.

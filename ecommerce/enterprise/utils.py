@@ -414,6 +414,6 @@ def get_enterprise_catalog(site, enterprise_catalog, limit, page):
         limit=limit,
         page=page,
     )
-    TieredCache.set_all_tiers(cache_key, response, settings.COURSES_API_CACHE_TIMEOUT)
+    TieredCache.set_all_tiers(cache_key, response, settings.CATALOG_RESULTS_CACHE_TIMEOUT)
 
     return response
