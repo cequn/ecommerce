@@ -110,7 +110,7 @@ def prepare_basket(request, products, voucher=None):
         basket.clear_vouchers()
         is_valid, message = validate_voucher(voucher, request.user, basket, request.site)
         if is_valid:
-            _apply_voucher_on_basket(voucher, request, basket)
+            apply_voucher_on_basket_and_check_discount(voucher, request, basket)
         else:
             logger.info(message)
 
@@ -386,7 +386,7 @@ def validate_voucher(voucher, user, basket, request_site):
     return True, ''
 
 
-def _apply_voucher_on_basket(voucher, request, basket):
+def apply_voucher_on_basket_and_check_discount(voucher, request, basket):
     """
     Applies voucher on a product.
 
@@ -397,4 +397,20 @@ def _apply_voucher_on_basket(voucher, request, basket):
     """
     basket.vouchers.add(voucher)
     Applicator().apply(basket, request.user, request)
-    logger.info('Applied Voucher [%s] to basket [%s].', voucher.code, basket.id)
+
+    # Recalculate discounts to see if the voucher gives any
+    discounts_after = request.basket.offer_applications
+    found_discount = False
+    for discount in discounts_after:
+        if discount['voucher'] and discount['voucher'] == voucher:
+            found_discount = True
+            break
+
+    if found_discount:
+        logger.info('Applied Voucher [%s] to basket [%s].', voucher.code, basket.id)
+        msg = _("Coupon code '{code}' added to basket.").format(code=voucher.code)
+        return True, msg
+    else:
+        msg = _('Your basket does not qualify for a coupon code discount.')
+        basket.clear_vouchers()
+        return False, msg

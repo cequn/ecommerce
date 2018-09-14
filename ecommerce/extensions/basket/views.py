@@ -29,9 +29,10 @@ from ecommerce.extensions.analytics.utils import (
 )
 from ecommerce.extensions.basket.utils import (
     add_utm_params_to_url,
+    apply_voucher_on_basket_and_check_discount,
     get_basket_switch_data,
     prepare_basket,
-    validate_voucher
+    validate_voucher,
 )
 from ecommerce.extensions.offer.utils import format_benefit_value, render_email_confirmation_if_required
 from ecommerce.extensions.order.exceptions import AlreadyPlacedOrderException
@@ -435,6 +436,8 @@ class VoucherAddView(BaseVoucherAddView):  # pylint: disable=function-redefined
 
         # Raise signal
         self.add_signal.send(sender=self, basket=self.request.basket, voucher=voucher)
+
+        apply_voucher_on_basket_and_check_discount(voucher,)
 
         # Recalculate discounts to see if the voucher gives any
         Applicator().apply(self.request.basket, self.request.user,
