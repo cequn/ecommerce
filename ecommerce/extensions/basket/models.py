@@ -1,3 +1,5 @@
+import newrelic
+
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from edx_django_utils.cache import DEFAULT_REQUEST_CACHE
@@ -20,6 +22,7 @@ class Basket(AbstractBasket):
     def order_number(self):
         return OrderNumberGenerator().order_number(self)
 
+    @newrelic.agent.function_trace()
     @classmethod
     def create_basket(cls, site, user):
         """ Create a new basket for the given site and user. """
@@ -27,6 +30,7 @@ class Basket(AbstractBasket):
         basket.strategy = Selector().strategy(user=user)
         return basket
 
+    @newrelic.agent.function_trace()
     @classmethod
     def get_basket(cls, user, site):
         """ Retrieve the basket belonging to the indicated user.
@@ -49,6 +53,7 @@ class Basket(AbstractBasket):
 
         return basket
 
+    @newrelic.agent.function_trace()
     def flush(self):
         """Remove all products in basket and fire Segment 'Product Removed' Analytic event for each"""
         cached_response = DEFAULT_REQUEST_CACHE.get_cached_response(TEMPORARY_BASKET_CACHE_KEY)
@@ -65,6 +70,7 @@ class Basket(AbstractBasket):
         # Call flush after we fetch all_lines() which is cleared during flush()
         super(Basket, self).flush()  # pylint: disable=bad-super-call
 
+    @newrelic.agent.function_trace()
     def add_product(self, product, quantity=1, options=None):
         """
         Add the indicated product to basket.

@@ -1,4 +1,5 @@
 import hashlib
+import newrelic
 
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
@@ -23,6 +24,7 @@ def mode_for_product(product):
     return mode
 
 
+@newrelic.agent.function_trace()
 def get_course_info_from_catalog(site, product):
     """ Get course or course_run information from Discovery Service and cache """
     if product.is_course_entitlement_product:
@@ -48,6 +50,7 @@ def get_course_info_from_catalog(site, product):
     return course
 
 
+@newrelic.agent.function_trace()
 def get_course_catalogs(site, resource_id=None):
     """
     Get details related to course catalogs from Discovery Service.
