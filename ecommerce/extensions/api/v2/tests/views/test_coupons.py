@@ -196,6 +196,7 @@ class CouponViewSetTest(CouponMixin, DiscoveryTestMixin, TestCase):
             'email_domains',
             'end_datetime',
             'enterprise_customer',
+            'enterprise_customer_catalog',
             'max_uses',
             'note',
             'partner',
